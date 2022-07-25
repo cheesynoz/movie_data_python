@@ -1,13 +1,18 @@
 
 def action_select():
     #print a vailable actions
-    print("OPTIONS: insert, close")
+    print("OPTIONS: view, insert, close")
 
     #user selects an action
     action = input("Select option: ")
 
+    #view the table
+    if action == ("view"):
+        view()
+        action_select()
+
     #insert a new movie into database
-    if action == ("insert"):
+    elif action == ("insert"):
         insert_movie()
 
     #closes the connection
@@ -17,6 +22,14 @@ def action_select():
     else:
         print("not a valid option, please try again")
         action_select()
+
+
+def view():
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM "Movie Data"')
+
+    for i in cursor:
+        print(i)
 
 
 def insert_movie():
@@ -34,13 +47,4 @@ connection = pypyodbc.connect('Driver={SQL Server};Server=LAPTOP-J9R8FKKO;Databa
   
 print("Connection Successfully Established")  
 
-cursor = connection.cursor()
-cursor.execute('SELECT * FROM "Movie Data"')
-
-for i in cursor:
-    print(i)
-
 action_select()
-
-#closing connection  
-connection.close() 
