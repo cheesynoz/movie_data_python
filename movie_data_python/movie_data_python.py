@@ -34,7 +34,39 @@ def view():
 
 def insert_movie():
     title = input("Enter the name of the movie: ")
-    print(title)
+    genre = input("Enter the genre of the movie: ")
+    director = input("Enter the name of the director: ")
+    release_year = get_release_year()
+    country = input("Enter the country of origin of the movie: ")
+    rating = get_rating()
+
+
+#gets the release year and makes sure it is valid
+def get_release_year():
+    year = input("Enter the year the movie was released: ")
+    try:
+        year = int(year)
+    except ValueError:
+        print("that is not a year")
+        get_release_year()
+    if year < 1800 or year > 2050:
+        print ("this year is not possible")
+        get_release_year()
+    return year
+
+def get_rating():
+    stars = input("Enter your rating for the movie(from 0 to 10 up to one decimal place): ")
+    try:
+        stars = float(stars)
+    except ValueError:
+        print("not a number")
+        get_rating()
+    if stars < 0.0 or stars > 10.0:
+        print("this is not a valid rating")
+        get_rating()
+
+
+
 
 
 
