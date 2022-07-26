@@ -36,19 +36,19 @@ def view():
 
 def insert_movie():
     title = input("Enter the name of the movie: ")
-    genre = input("Enter the genre of the movie: ")
-    director = input("Enter the name of the director: ")
-    release_year = get_release_year()
-    print(release_year)
-    country = input("Enter the country of origin of the movie: ")
-    rating = get_rating()
+    genre = input("Enter the genre of {}: ".format(title))
+    director = input("Enter the name of the director of {}: ".format(title))
+    release_year = get_release_year(title)
+    country = input("Enter the country of origin of {}: ".format(title))
+    rating = get_rating(title)
+    is_favorite = get_is_favorite(title)
 
 
 #gets the release year and makes sure it is valid
-def get_release_year():
+def get_release_year(title):
     while True:
         try:
-            year = int(input("Enter the year the movie was released: "))
+            year = int(input("Enter the year {} was released: ".format(title)))
         except ValueError:
             print("that is not a year")
             continue
@@ -61,16 +61,31 @@ def get_release_year():
     return year
 
 
-def get_rating():
-    stars = input("Enter your rating for the movie(from 0 to 10 up to one decimal place): ")
-    try:
-        stars = float(stars)
-    except ValueError:
-        print("not a number")
-        get_rating()
-    if stars < 0.0 or stars > 10.0:
-        print("this is not a valid rating")
-        get_rating()
+def get_rating(title):
+    while True:
+        try:
+            stars = float(input("Enter your rating for {} (from 0 to 10 up to one decimal place): ".format(title)))
+        except ValueError:
+            print("not a number")
+            continue
+        else:
+            if stars < 0.0 or stars > 10.0:
+                print("this is not a valid rating")
+                continue
+            else:
+                break
+    return stars
+
+def get_is_favorite(title):
+    while True:
+            fav = input("Add {} to your favorites? (yes or no)".format(title))
+            if fav != "yes" and fav!= "no":
+                print("Please answer yes or no")
+                continue
+            else:
+                if fav == "yes":
+                    return True
+                return False
 
 
 
