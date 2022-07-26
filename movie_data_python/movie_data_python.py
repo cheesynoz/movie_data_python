@@ -24,6 +24,8 @@ def action_select():
         action_select()
 
 
+
+#prints all the entries
 def view():
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM "Movie Data"')
@@ -37,22 +39,27 @@ def insert_movie():
     genre = input("Enter the genre of the movie: ")
     director = input("Enter the name of the director: ")
     release_year = get_release_year()
+    print(release_year)
     country = input("Enter the country of origin of the movie: ")
     rating = get_rating()
 
 
 #gets the release year and makes sure it is valid
 def get_release_year():
-    year = input("Enter the year the movie was released: ")
-    try:
-        year = int(year)
-    except ValueError:
-        print("that is not a year")
-        get_release_year()
-    if year < 1800 or year > 2050:
-        print ("this year is not possible")
-        get_release_year()
+    while True:
+        try:
+            year = int(input("Enter the year the movie was released: "))
+        except ValueError:
+            print("that is not a year")
+            continue
+        else:
+            if year < 1800 or year > 2050:
+                print ("this year is not possible")
+                continue
+            else:
+                break
     return year
+
 
 def get_rating():
     stars = input("Enter your rating for the movie(from 0 to 10 up to one decimal place): ")
