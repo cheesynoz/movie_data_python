@@ -42,6 +42,8 @@ def insert_movie():
     country = input("Enter the country of origin of {}: ".format(title))
     rating = get_rating(title)
     is_favorite = get_is_favorite(title)
+    date = get_date(title)
+    print(date)
 
 
 #gets the release year and makes sure it is valid
@@ -78,14 +80,30 @@ def get_rating(title):
 
 def get_is_favorite(title):
     while True:
-            fav = input("Add {} to your favorites? (yes or no)".format(title))
-            if fav != "yes" and fav!= "no":
-                print("Please answer yes or no")
-                continue
+        fav = input("Add {} to your favorites? (yes or no)".format(title))
+        if fav != "yes" and fav!= "no":
+            print("Please answer yes or no")
+            continue
+        else:
+            if fav == "yes":
+                return True
+            return False
+
+def get_date(title):
+    while True:
+        try:
+            date = input("Enter the date you watched {} in the form of YYYY/MM/DD (leave blank if you don't know): ".format(title))
+            if date == "":
+                return None
             else:
-                if fav == "yes":
-                    return True
-                return False
+                stripped = datetime.strptime(date, '%Y/%m/%d')
+                return date
+        except ValueError:
+            print("incorrect date format")
+            continue
+
+
+
 
 
 
@@ -96,7 +114,9 @@ def get_is_favorite(title):
 
 #importing module  
 import pypyodbc  
+from datetime import datetime
 #creating connection Object which will contain SQL Server Connection  
+#fill in your own Server and Database name
 connection = pypyodbc.connect('Driver={SQL Server};Server=LAPTOP-J9R8FKKO;Database=testforproject;Trusted_Connection=yes')  
   
 print("Connection Successfully Established")  
