@@ -3,7 +3,7 @@ from asyncio.windows_events import NULL
 
 
 def action_select():
-    #print a vailable actions
+    #print available actions
     print("OPTIONS: view, insert, close")
 
     #user selects an action
@@ -45,12 +45,12 @@ def insert_movie():
     rating = get_rating(title)
     is_favorite = get_is_favorite(title)
     date = get_date(title)
-    entry_number = cursor.execute
+    print(date)
     cursor.execute('''
-                INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Favorite?")
+                INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Favorite?", "Date Watched")
                 VALUES
-                ('{}', '{}', '{}', {}, '{}', {}, '{}')
-                '''.format(title, genre, director, release_year, country, rating, is_favorite))
+                ('{}', '{}', '{}', {}, '{}', {}, '{}', '{}')
+                '''.format(title, genre, director, release_year, country, rating, is_favorite, date))
     action_select()
     
 
@@ -106,8 +106,8 @@ def get_date(title):
                 return NULL
             else:
                 stripped = datetime.strptime(date, '%Y/%m/%d')
-                print(stripped)
-                return date
+                date_query = str(stripped.date())
+                return date_query
         except ValueError:
             print("incorrect date format")
             continue
