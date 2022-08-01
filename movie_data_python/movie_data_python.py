@@ -1,4 +1,7 @@
 
+from asyncio.windows_events import NULL
+
+
 def action_select():
     #print a vailable actions
     print("OPTIONS: view, insert, close")
@@ -27,7 +30,6 @@ def action_select():
 
 #prints all the entries
 def view():
-    cursor = connection.cursor()
     cursor.execute('SELECT * FROM "Movie Data"')
 
     for i in cursor:
@@ -43,7 +45,14 @@ def insert_movie():
     rating = get_rating(title)
     is_favorite = get_is_favorite(title)
     date = get_date(title)
-    print(date)
+    entry_number = cursor.execute
+    cursor.execute('''
+                INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Favorite?")
+                VALUES
+                ('{}', '{}', '{}', {}, '{}', {}, '{}')
+                '''.format(title, genre, director, release_year, country, rating, is_favorite))
+    action_select()
+    
 
 
 #gets the release year and makes sure it is valid
@@ -93,10 +102,11 @@ def get_date(title):
     while True:
         try:
             date = input("Enter the date you watched {} in the form of YYYY/MM/DD (leave blank if you don't know): ".format(title))
-            if date == "":
-                return None
+            if not date:
+                return NULL
             else:
                 stripped = datetime.strptime(date, '%Y/%m/%d')
+                print(stripped)
                 return date
         except ValueError:
             print("incorrect date format")
@@ -117,7 +127,9 @@ import pypyodbc
 from datetime import datetime
 #creating connection Object which will contain SQL Server Connection  
 #fill in your own Server and Database name
+print("Loading...")
 connection = pypyodbc.connect('Driver={SQL Server};Server=LAPTOP-J9R8FKKO;Database=testforproject;Trusted_Connection=yes')  
+cursor = connection.cursor()
   
 print("Connection Successfully Established")  
 
