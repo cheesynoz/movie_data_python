@@ -51,6 +51,7 @@ def insert_movie():
                 VALUES
                 ('{}', '{}', '{}', {}, '{}', {}, '{}', '{}')
                 '''.format(title, genre, director, release_year, country, rating, is_favorite, date))
+    connection.commit()
     action_select()
     
 
