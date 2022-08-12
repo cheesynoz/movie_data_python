@@ -38,7 +38,7 @@ def view():
 
     for i in cursor:
         print(i)
-    
+    view_options()
 
 def insert_movie():
     title = input("Enter the name of the movie: ")
@@ -66,7 +66,8 @@ def insert_movie():
 
 
 def delete_movie():
-    option = input("Would you like to delete entry by id or title? (or enter back to go back): ")
+    print("Would you like to delete entry by id or title? (or enter back to go back)")
+    option = input()
     if option == "id":
         id = get_id()
         cursor.execute('''
@@ -112,6 +113,59 @@ def delete_movie():
 #
 
 
+def view_options():
+    print("Would you like to sort, search, or go back?")
+    option = input()
+    if option == "search":
+        search(option)
+    elif option == "sort":
+        #sort
+        return 0
+    elif option == "back" or option == "go back":
+        action_select()
+    else:
+        print("Not a valid option")
+
+
+
+def search(option):
+    print("search by id, title, genre, director, release year, country, rating, favorites, date watched, or go back?")
+    term = input()
+    if term == "id":
+        #search for a specific id
+        return 0
+    elif term == "title":
+        #search for a specific title
+        return 0
+    elif term == "genre":
+        #search for a specific genre
+        return 0
+    elif term == "director":
+        #search for a specific director
+        return 0
+    elif term == "release year":
+        #search for a specific release year or decade
+        return 0
+    elif term == "country":
+        #search for a specific country
+        return 0
+    elif term == "rating":
+        #search for a specific rating
+        return 0
+    elif term == "favorites":
+        #search for favorites
+        return 0
+    elif term == "date watched":
+        #search for a specific day, month, year
+        return 0
+    elif term == "back" or term == "go back":
+        view_options()
+    else:
+        print("Not a valid option")
+        action_select()
+
+
+
 
 
 
@@ -151,7 +205,7 @@ def get_rating(title):
 
 def get_is_favorite(title):
     while True:
-        fav = input("Add {} to your favorites? (yes or no)".format(title))
+        fav = input("Add {} to your favorites? (yes or no): ".format(title))
         if fav != "yes" and fav!= "no":
             print("Please answer yes or no")
             continue
@@ -177,7 +231,7 @@ def get_date(title):
 def get_id():
     while True:
         try:
-            id = int(input("what is the id of the entry?"))
+            id = int(input("what is the id of the entry? "))
         except ValueError:
             print("not a number")
             continue
