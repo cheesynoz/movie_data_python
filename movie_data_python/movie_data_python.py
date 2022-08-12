@@ -4,7 +4,7 @@ from asyncio.windows_events import NULL
 
 def action_select():
     #print available actions
-    print("OPTIONS: view, insert, close")
+    print("OPTIONS: view, delete, insert, close")
 
     #user selects an action
     action = input("Select option: ")
@@ -17,6 +17,10 @@ def action_select():
     #insert a new movie into database
     elif action == ("insert"):
         insert_movie()
+
+    #removes a movie from the database
+    elif action == ("delete"):
+        delete_movie()
 
     #closes the connection
     elif action == ("close"):
@@ -34,7 +38,7 @@ def view():
 
     for i in cursor:
         print(i)
-
+    
 
 def insert_movie():
     title = input("Enter the name of the movie: ")
@@ -45,15 +49,72 @@ def insert_movie():
     rating = get_rating(title)
     is_favorite = get_is_favorite(title)
     date = get_date(title)
-    print(date)
-    cursor.execute('''
-                INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Favorite?", "Date Watched")
-                VALUES
-                ('{}', '{}', '{}', {}, '{}', {}, '{}', '{}')
-                '''.format(title, genre, director, release_year, country, rating, is_favorite, date))
+    if (date):
+        cursor.execute('''
+                    INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Favorite?", "Date Watched")
+                    VALUES
+                    ('{}', '{}', '{}', {}, '{}', {}, '{}', '{}')
+                    '''.format(title, genre, director, release_year, country, rating, is_favorite, date))
+    else: 
+        cursor.execute('''
+                    INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Favorite?", "Date Watched")
+                    VALUES
+                    ('{}', '{}', '{}', {}, '{}', {}, '{}', NULL)
+                    '''.format(title, genre, director, release_year, country, rating, is_favorite))
     connection.commit()
     action_select()
+
+
+def delete_movie():
+    option = input("Would you like to delete entry by id or title? (or enter back to go back): ")
+    if option == "id":
+        id = get_id()
+        cursor.execute('''
+                    SELECT Title FROM "Movie Data" WHERE id='{}'
+        '''.format(id))
+        title = str(cursor.fetchone())
+        cursor.execute('''
+                    DELETE FROM "Movie Data" WHERE id='{}'
+        '''.format(id))
+        connection.commit()
+        deleted = cursor.rowcount
+        if deleted == 0:
+            print("nothing to delete at this id")
+        else:
+            print("successfully deleted {}".format(title))
+        action_select()
+    elif option == "title":
+        title = input("Enter the name of the movie: ")
+        cursor.execute('''
+                    DELETE FROM "Movie Data" WHERE Title='{}'
+        '''.format(title))
+        connection.commit()
+        deleted = cursor.rowcount
+        if deleted == 0:
+            print("There is no entry with this title")
+        elif deleted == 1:
+            print("successfully deleted {}".format(title))
+        else:
+            print("successfully deleted {} entries of {}".format(deleted, title))
+        action_select()
+    elif option == "back":
+        action_select()
+    else:
+        print("not a valid option, please try again")
+        delete_movie()
     
+    
+
+
+#       HELPER FUNCTIONS FOR ABOVE FUNCTIONS
+#
+#
+#
+
+
+
+
+
 
 
 #gets the release year and makes sure it is valid
@@ -104,7 +165,7 @@ def get_date(title):
         try:
             date = input("Enter the date you watched {} in the form of YYYY/MM/DD (leave blank if you don't know): ".format(title))
             if not date:
-                return NULL
+                return None
             else:
                 stripped = datetime.strptime(date, '%Y/%m/%d')
                 date_query = str(stripped.date())
@@ -112,6 +173,27 @@ def get_date(title):
         except ValueError:
             print("incorrect date format")
             continue
+
+def get_id():
+    while True:
+        try:
+            id = int(input("what is the id of the entry?"))
+        except ValueError:
+            print("not a number")
+            continue
+        else:
+            cursor.execute('SELECT max(id) FROM "Movie Data"')
+            max_id = cursor.fetchone()[0]
+            if id < 0 or id > max_id:
+                print("this is not a valid id")
+                continue
+            else:
+                break
+    return id
+
+            
+
+
 
 
 
@@ -133,5 +215,7 @@ connection = pypyodbc.connect('Driver={SQL Server};Server=LAPTOP-J9R8FKKO;Databa
 cursor = connection.cursor()
   
 print("Connection Successfully Established")  
+
+
 
 action_select()
