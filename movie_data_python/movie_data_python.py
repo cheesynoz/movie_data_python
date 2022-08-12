@@ -38,7 +38,7 @@ def view():
 
     for i in cursor:
         print(i)
-
+    
 
 def insert_movie():
     title = input("Enter the name of the movie: ")
@@ -66,9 +66,13 @@ def insert_movie():
 
 
 def delete_movie():
-    option = input("Would you like to delete entry by id or title? (or enter back to go back)")
+    option = input("Would you like to delete entry by id or title? (or enter back to go back): ")
     if option == "id":
         id = get_id()
+        cursor.execute('''
+                    SELECT Title FROM "Movie Data" WHERE id='{}'
+        '''.format(id))
+        title = str(cursor.fetchone())
         cursor.execute('''
                     DELETE FROM "Movie Data" WHERE id='{}'
         '''.format(id))
@@ -77,7 +81,7 @@ def delete_movie():
         if deleted == 0:
             print("nothing to delete at this id")
         else:
-            print("successfully deleted one entry")
+            print("successfully deleted {}".format(title))
         action_select()
     elif option == "title":
         title = input("Enter the name of the movie: ")
@@ -89,9 +93,9 @@ def delete_movie():
         if deleted == 0:
             print("There is no entry with this title")
         elif deleted == 1:
-            print("successfully deleted one entry")
+            print("successfully deleted {}".format(title))
         else:
-            print("successfully deleted {} entries".format(deleted))
+            print("successfully deleted {} entries of {}".format(deleted, title))
         action_select()
     elif option == "back":
         action_select()
@@ -106,6 +110,12 @@ def delete_movie():
 #
 #
 #
+
+
+
+
+
+
 
 #gets the release year and makes sure it is valid
 def get_release_year(title):
@@ -205,6 +215,7 @@ connection = pypyodbc.connect('Driver={SQL Server};Server=LAPTOP-J9R8FKKO;Databa
 cursor = connection.cursor()
   
 print("Connection Successfully Established")  
+
 
 
 action_select()
