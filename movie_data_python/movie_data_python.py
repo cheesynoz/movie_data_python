@@ -117,7 +117,7 @@ def view_options():
     print("Would you like to sort, search, or go back?")
     option = input()
     if option == "search":
-        search(option)
+        search()
     elif option == "sort":
         #sort
         return 0
@@ -127,15 +127,28 @@ def view_options():
         print("Not a valid option")
 
 
-
-def search(option):
+def search():
     print("search by id, title, genre, director, release year, country, rating, favorites, date watched, or go back?")
     term = input()
     if term == "id":
         #search for a specific id
-        return 0
+        id = get_id()
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE id='{}'
+        '''.format(id))
+        entry = cursor.fetchone()
+        print(entry)
     elif term == "title":
         #search for a specific title
+        title = get_title()  
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Title='{}'
+        '''.format(title))
+        for i in cursor:
+            print(i)
+        
+
+
         return 0
     elif term == "genre":
         #search for a specific genre
@@ -163,6 +176,8 @@ def search(option):
     else:
         print("Not a valid option")
         action_select()
+
+    action_select()
 
 
 
@@ -231,7 +246,7 @@ def get_date(title):
 def get_id():
     while True:
         try:
-            id = int(input("what is the id of the entry? "))
+            id = int(input("What is the id of the entry? "))
         except ValueError:
             print("not a number")
             continue
@@ -244,6 +259,18 @@ def get_id():
             else:
                 break
     return id
+
+def get_title():
+    while True:
+        title = input("What is the title of the movie?")
+        cursor.execute('SELECT * FROM "Movie Data" WHERE Title = {}'.format(title))
+        if cursor.rowcount == 0:
+            print("There are no entries with this title")
+            search()
+        else:
+            return title
+            
+
 
             
 
