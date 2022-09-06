@@ -263,7 +263,9 @@ def get_id():
 def get_title():
     while True:
         title = input("What is the title of the movie?")
-        cursor.execute('SELECT * FROM "Movie Data" WHERE Title = {}'.format(title))
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Title='{}'
+        '''.format(title))
         if cursor.rowcount == 0:
             print("There are no entries with this title")
             search()
