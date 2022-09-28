@@ -156,7 +156,12 @@ def search():
             print(i)
     elif term == "director":
         #search for a specific director
-        return 0
+        director = get_director()
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Director='{}'
+        '''.format(director))
+        for i in cursor:
+            print(i)
     elif term == "release year":
         #search for a specific release year or decade
         return 0
@@ -285,6 +290,19 @@ def get_genre():
         else:
             print("not a valid genre")
             print("The genres are Action, Comedy, Crime, Documentary, Drama, Fantasy, Horror, Science Fiction, and Western")
+
+def get_director():
+    while True:
+        print("Who is the director of the movie?")
+        director = input()
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Director='{}'
+        '''.format(director))
+        if cursor.rowcount == 0:
+            print("There are no entries with this Director")
+            search()
+        else:
+            return director
   
 
 
