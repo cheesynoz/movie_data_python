@@ -146,13 +146,14 @@ def search():
         '''.format(title))
         for i in cursor:
             print(i)
-        
-
-
-        return 0
     elif term == "genre":
         #search for a specific genre
-        return 0
+        genre = get_genre()  
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Genre='{}'
+        '''.format(genre))
+        for i in cursor:
+            print(i)
     elif term == "director":
         #search for a specific director
         return 0
@@ -231,17 +232,11 @@ def get_is_favorite(title):
 
 def get_date(title):
     while True:
-        try:
-            date = input("Enter the date you watched {} in the form of YYYY/MM/DD (leave blank if you don't know): ".format(title))
-            if not date:
-                return None
-            else:
-                stripped = datetime.strptime(date, '%Y/%m/%d')
-                date_query = str(stripped.date())
-                return date_query
-        except ValueError:
-            print("incorrect date format")
-            continue
+        date = input("Enter the date you watched {} in the form of YYYY/MM/DD (leave blank if you don't know): ".format(title))
+        if not date:
+            return None
+        else:
+            return date
 
 def get_id():
     while True:
@@ -262,7 +257,8 @@ def get_id():
 
 def get_title():
     while True:
-        title = input("What is the title of the movie?")
+        print("What is the title of the movie?")
+        title = input()
         cursor.execute('''
                     SELECT * FROM "Movie Data" WHERE Title='{}'
         '''.format(title))
@@ -271,7 +267,25 @@ def get_title():
             search()
         else:
             return title
-            
+
+def get_genre():
+    while True:
+        genres = ["Action", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Horror", "Science Fiction", "Western"]
+        print("What is the genre of the movie?")
+        genre = input()
+        if genre in genres:
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Genre='{}'
+            '''.format(genre))
+            if cursor.rowcount == 0:
+                print("There are no entries with this genre")
+                search()
+            else:
+                return genre
+        else:
+            print("not a valid genre")
+            print("The genres are Action, Comedy, Crime, Documentary, Drama, Fantasy, Horror, Science Fiction, and Western")
+  
 
 
             
@@ -293,8 +307,9 @@ import pypyodbc
 from datetime import datetime
 #creating connection Object which will contain SQL Server Connection  
 #fill in your own Server and Database name
+#make sure to set server to not timeout in Microsoft SQL Server Management Studio
 print("Loading...")
-connection = pypyodbc.connect('Driver={SQL Server};Server=LAPTOP-J9R8FKKO;Database=testforproject;Trusted_Connection=yes')  
+connection = pypyodbc.connect('Driver={SQL Server Native Client 11.0};Server=LAPTOP-J9R8FKKO;Database=testforproject;Trusted_Connection=yes')  
 cursor = connection.cursor()
   
 print("Connection Successfully Established")  
