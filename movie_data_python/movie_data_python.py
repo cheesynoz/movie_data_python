@@ -164,7 +164,12 @@ def search():
             print(i)
     elif term == "release year":
         #search for a specific release year or decade
-        return 0
+        year = get_release_year("the movie")
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE "Release Year"='{}'
+        '''.format(year))
+        for i in cursor:
+            print(i)
     elif term == "country":
         #search for a specific country
         return 0
@@ -196,6 +201,7 @@ def search():
 def get_release_year(title):
     while True:
         try:
+            if title != ""
             year = int(input("Enter the year {} was released: ".format(title)))
         except ValueError:
             print("that is not a year")
