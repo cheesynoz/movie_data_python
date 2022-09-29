@@ -4,7 +4,7 @@ from asyncio.windows_events import NULL
 
 def action_select():
     #print available actions
-    print("OPTIONS: view, delete, insert, close")
+    print("OPTIONS: view, insert, delete, search, sort, or close")
 
     #user selects an action
     action = input("Select option: ")
@@ -22,6 +22,9 @@ def action_select():
     elif action == ("delete"):
         delete_movie()
 
+    elif action == ("search"):
+        search()
+
     #closes the connection
     elif action == ("close"):
         connection.close()
@@ -38,7 +41,7 @@ def view():
 
     for i in cursor:
         print(i)
-    view_options()
+    action_select()
 
 def insert_movie():
     title = input("Enter the name of the movie: ")
@@ -103,6 +106,86 @@ def delete_movie():
     else:
         print("not a valid option, please try again")
         delete_movie()
+
+    
+    #Searches through entries based on selected criteria
+
+    def search():
+        print("search by id, title, genre, director, release year, country, rating, favorites, date watched, or go back?")
+        term = input()
+        if term == "id":
+            #search for a specific id
+            id = get_id()
+            cursor.execute('''
+                        SELECT * FROM "Movie Data" WHERE id='{}'
+            '''.format(id))
+            entry = cursor.fetchone()
+            print(entry)
+        elif term == "title":
+            #search for a specific title
+            title = get_title()  
+            cursor.execute('''
+                        SELECT * FROM "Movie Data" WHERE Title='{}'
+            '''.format(title))
+            for i in cursor:
+                print(i)
+        elif term == "genre":
+            #search for a specific genre
+            genre = get_genre()  
+            cursor.execute('''
+                        SELECT * FROM "Movie Data" WHERE Genre='{}'
+            '''.format(genre))
+            for i in cursor:
+                print(i)
+        elif term == "director":
+            #search for a specific director
+            director = get_director()
+            cursor.execute('''
+                        SELECT * FROM "Movie Data" WHERE Director='{}'
+            '''.format(director))
+            for i in cursor:
+                print(i)
+        elif term == "release year":
+            #search for a specific release year or decade
+            year = get_release_year("this is just for search")
+            cursor.execute('''
+                        SELECT * FROM "Movie Data" WHERE "Release Year"='{}'
+            '''.format(year))
+            for i in cursor:
+                print(i)
+        elif term == "country":
+            #search for a specific country
+            country = get_country()
+            cursor.execute('''
+                        SELECT * FROM "Movie Data" WHERE Country='{}'
+            '''.format(country))
+            for i in cursor:
+                print(i)
+        elif term == "rating":
+            #search for a specific rating
+            rating = get_rating("this is just for search")
+            cursor.execute('''
+                        SELECT * FROM "Movie Data" WHERE Rating='{}'
+            '''.format(rating))
+            if cursor.rowcount == 0:
+                print("There are no entries with this rating")
+            else:
+                for i in cursor:
+                    print(i)
+        elif term == "favorites":
+            #search for favorites
+            return 0
+        elif term == "date watched":
+            #search for a specific day, month, year
+            return 0
+        elif term == "back" or term == "go back":
+            view_options()
+        else:
+            print("Not a valid option")
+            action_select()
+
+        action_select()
+       
     
     
 
@@ -111,93 +194,6 @@ def delete_movie():
 #
 #
 #
-
-
-def view_options():
-    print("Would you like to sort, search, or go back?")
-    option = input()
-    if option == "search":
-        search()
-    elif option == "sort":
-        #sort
-        return 0
-    elif option == "back" or option == "go back":
-        action_select()
-    else:
-        print("Not a valid option")
-
-
-def search():
-    print("search by id, title, genre, director, release year, country, rating, favorites, date watched, or go back?")
-    term = input()
-    if term == "id":
-        #search for a specific id
-        id = get_id()
-        cursor.execute('''
-                    SELECT * FROM "Movie Data" WHERE id='{}'
-        '''.format(id))
-        entry = cursor.fetchone()
-        print(entry)
-    elif term == "title":
-        #search for a specific title
-        title = get_title()  
-        cursor.execute('''
-                    SELECT * FROM "Movie Data" WHERE Title='{}'
-        '''.format(title))
-        for i in cursor:
-            print(i)
-    elif term == "genre":
-        #search for a specific genre
-        genre = get_genre()  
-        cursor.execute('''
-                    SELECT * FROM "Movie Data" WHERE Genre='{}'
-        '''.format(genre))
-        for i in cursor:
-            print(i)
-    elif term == "director":
-        #search for a specific director
-        director = get_director()
-        cursor.execute('''
-                    SELECT * FROM "Movie Data" WHERE Director='{}'
-        '''.format(director))
-        for i in cursor:
-            print(i)
-    elif term == "release year":
-        #search for a specific release year or decade
-        year = get_release_year("this is just for search")
-        cursor.execute('''
-                    SELECT * FROM "Movie Data" WHERE "Release Year"='{}'
-        '''.format(year))
-        for i in cursor:
-            print(i)
-    elif term == "country":
-        #search for a specific country
-        country = get_country()
-        cursor.execute('''
-                    SELECT * FROM "Movie Data" WHERE Country='{}'
-        '''.format(country))
-        for i in cursor:
-            print(i)
-    elif term == "rating":
-        #search for a specific rating
-        return 0
-    elif term == "favorites":
-        #search for favorites
-        return 0
-    elif term == "date watched":
-        #search for a specific day, month, year
-        return 0
-    elif term == "back" or term == "go back":
-        view_options()
-    else:
-        print("Not a valid option")
-        action_select()
-
-    action_select()
-
-
-
-
 
 
 
@@ -225,17 +221,20 @@ def get_release_year(title):
 def get_rating(title):
     while True:
         try:
-            stars = float(input("Enter your rating for {} (from 0 to 10 up to one decimal place): ".format(title)))
+            if title != "this is just for search":
+                rating = float(input("Enter your rating for {} (from 0 to 10 up to one decimal place): ".format(title)))
+            else:
+                rating = int(input("Enter the rating: "))
         except ValueError:
             print("not a number")
             continue
         else:
-            if stars < 0.0 or stars > 10.0:
+            if rating < 0.0 or rating > 10.0:
                 print("this is not a valid rating")
                 continue
             else:
                 break
-    return stars
+    return rating
 
 def get_is_favorite(title):
     while True:
