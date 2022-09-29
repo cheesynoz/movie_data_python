@@ -174,14 +174,11 @@ def search():
         else:
             for i in cursor:
                 print(i)
-    elif term == "favorites":
-        #search for favorites
-        return 0
     elif term == "date watched":
         #search for a specific day, month, year
-        return 0
+        search_date()
     elif term == "back" or term == "go back":
-        view_options()
+        action_select()
     else:
         print("Not a valid option")
         action_select()
@@ -340,6 +337,43 @@ def get_country():
         else:
             break
     return country
+
+def search_date():
+    while True:
+        print("Search by year, month, date, or go back?")
+        select = input()
+        if select == "year":
+            #search by year
+            try:
+                print("What year would you like to search?")
+                year = int(input())
+            except ValueError:
+                print("not a number")
+                continue
+            if year < 1850 or year > 2050:
+                print("this is not a valid year")
+            else:
+                cursor.execute('''
+                        SELECT * FROM "Movie Data" WHERE "Date Watched" LIKE '%{}%'
+                '''.format(year))
+                if cursor.rowcount == 0:
+                    print("There are no movies watched in that year")
+                else:
+                    for i in cursor:
+                        print(i)
+        elif select == "month":
+            #search by month
+            break
+        elif select == "date":
+            #search by exact date
+            break
+        elif select == "back":
+            search()
+        else:
+            print("this is not a valid option")
+    action_select()
+    
+
             
   
 
