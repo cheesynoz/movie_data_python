@@ -22,6 +22,7 @@ def action_select():
     elif action == ("delete"):
         delete_movie()
 
+    #searches through entries
     elif action == ("search"):
         search()
 
@@ -43,6 +44,7 @@ def view():
         print(i)
     action_select()
 
+#Inserts a new entry into the database
 def insert_movie():
     title = input("Enter the name of the movie: ")
     genre = input("Enter the genre of {}: ".format(title))
@@ -67,7 +69,7 @@ def insert_movie():
     connection.commit()
     action_select()
 
-
+#Deletes an entry from database
 def delete_movie():
     print("Would you like to delete entry by id or title? (or enter back to go back)")
     option = input()
@@ -108,83 +110,83 @@ def delete_movie():
         delete_movie()
 
     
-    #Searches through entries based on selected criteria
+#Searches through entries based on selected criteria
 
-    def search():
-        print("search by id, title, genre, director, release year, country, rating, favorites, date watched, or go back?")
-        term = input()
-        if term == "id":
-            #search for a specific id
-            id = get_id()
-            cursor.execute('''
-                        SELECT * FROM "Movie Data" WHERE id='{}'
-            '''.format(id))
-            entry = cursor.fetchone()
-            print(entry)
-        elif term == "title":
-            #search for a specific title
-            title = get_title()  
-            cursor.execute('''
-                        SELECT * FROM "Movie Data" WHERE Title='{}'
-            '''.format(title))
-            for i in cursor:
-                print(i)
-        elif term == "genre":
-            #search for a specific genre
-            genre = get_genre()  
-            cursor.execute('''
-                        SELECT * FROM "Movie Data" WHERE Genre='{}'
-            '''.format(genre))
-            for i in cursor:
-                print(i)
-        elif term == "director":
-            #search for a specific director
-            director = get_director()
-            cursor.execute('''
-                        SELECT * FROM "Movie Data" WHERE Director='{}'
-            '''.format(director))
-            for i in cursor:
-                print(i)
-        elif term == "release year":
-            #search for a specific release year or decade
-            year = get_release_year("this is just for search")
-            cursor.execute('''
-                        SELECT * FROM "Movie Data" WHERE "Release Year"='{}'
-            '''.format(year))
-            for i in cursor:
-                print(i)
-        elif term == "country":
-            #search for a specific country
-            country = get_country()
-            cursor.execute('''
-                        SELECT * FROM "Movie Data" WHERE Country='{}'
-            '''.format(country))
-            for i in cursor:
-                print(i)
-        elif term == "rating":
-            #search for a specific rating
-            rating = get_rating("this is just for search")
-            cursor.execute('''
-                        SELECT * FROM "Movie Data" WHERE Rating='{}'
-            '''.format(rating))
-            if cursor.rowcount == 0:
-                print("There are no entries with this rating")
-            else:
-                for i in cursor:
-                    print(i)
-        elif term == "favorites":
-            #search for favorites
-            return 0
-        elif term == "date watched":
-            #search for a specific day, month, year
-            return 0
-        elif term == "back" or term == "go back":
-            view_options()
+def search():
+    print("search by id, title, genre, director, release year, country, rating, favorites, date watched, or go back?")
+    term = input()
+    if term == "id":
+        #search for a specific id
+        id = get_id()
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE id='{}'
+        '''.format(id))
+        entry = cursor.fetchone()
+        print(entry)
+    elif term == "title":
+        #search for a specific title
+        title = get_title()  
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Title='{}'
+        '''.format(title))
+        for i in cursor:
+            print(i)
+    elif term == "genre":
+        #search for a specific genre
+        genre = get_genre()  
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Genre='{}'
+        '''.format(genre))
+        for i in cursor:
+            print(i)
+    elif term == "director":
+        #search for a specific director
+        director = get_director()
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Director='{}'
+        '''.format(director))
+        for i in cursor:
+            print(i)
+    elif term == "release year":
+        #search for a specific release year or decade
+        year = get_release_year("this is just for search")
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE "Release Year"='{}'
+        '''.format(year))
+        for i in cursor:
+            print(i)
+    elif term == "country":
+        #search for a specific country
+        country = get_country()
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Country='{}'
+        '''.format(country))
+        for i in cursor:
+            print(i)
+    elif term == "rating":
+        #search for a specific rating
+        rating = get_rating("this is just for search")
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Rating='{}'
+        '''.format(rating))
+        if cursor.rowcount == 0:
+            print("There are no entries with this rating")
         else:
-            print("Not a valid option")
-            action_select()
-
+            for i in cursor:
+                print(i)
+    elif term == "favorites":
+        #search for favorites
+        return 0
+    elif term == "date watched":
+        #search for a specific day, month, year
+        return 0
+    elif term == "back" or term == "go back":
+        view_options()
+    else:
+        print("Not a valid option")
         action_select()
+
+    action_select()
        
     
     
@@ -217,7 +219,7 @@ def get_release_year(title):
                 break
     return year
 
-
+#Gets the rating and makes sure it is valid
 def get_rating(title):
     while True:
         try:
@@ -236,6 +238,7 @@ def get_rating(title):
                 break
     return rating
 
+#Determines if movie will be added to favorites
 def get_is_favorite(title):
     while True:
         fav = input("Add {} to your favorites? (yes or no): ".format(title))
@@ -247,6 +250,7 @@ def get_is_favorite(title):
                 return True
             return False
 
+#Used to get the date the movie was watched or returns None if not known
 def get_date(title):
     while True:
         date = input("Enter the date you watched {} in the form of YYYY/MM/DD (leave blank if you don't know): ".format(title))
@@ -255,6 +259,7 @@ def get_date(title):
         else:
             return date
 
+#Used to get id of entry when searching by id
 def get_id():
     while True:
         try:
@@ -272,6 +277,7 @@ def get_id():
                 break
     return id
 
+#Used to get title of movie
 def get_title():
     while True:
         print("What is the title of the movie?")
@@ -286,6 +292,7 @@ def get_title():
             break
     return title
 
+#Used to get the genre of the movie
 def get_genre():
     while True:
         genres = ["Action", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Horror", "Science Fiction", "Western"]
@@ -305,6 +312,7 @@ def get_genre():
             print("The genres are Action, Comedy, Crime, Documentary, Drama, Fantasy, Horror, Science Fiction, and Western")
         return genre
 
+#Used to get the director of movie 
 def get_director():
     while True:
         print("Who is the director of the movie?")
@@ -319,6 +327,7 @@ def get_director():
             break
     return director
 
+#Used to get the country of origin of movie
 def get_country():
     while True:
         print("What is the country of origin?")
