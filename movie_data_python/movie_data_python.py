@@ -363,7 +363,36 @@ def search_date():
                         print(i)
         elif select == "month":
             #search by month
-            break
+            try:
+                print("What month would you like to search?")
+                month = int(input())
+            except ValueError:
+                print("not a number")
+                continue
+            if month > 12 or month < 1:
+                print("this is not a valid month")
+            else:
+                try:
+                    print("What year would you like to search?")
+                    year = int(input())
+                except ValueError:
+                    print("not a number")
+                    continue
+                if year < 1850 or year > 2050:
+                    print("this is not a valid year")
+                else:
+                    if month == 10 or month == 11 or month == 12:
+                        ym = str(year) + "/" + str(month)
+                    else:
+                        ym = str(year) + "/0" + str(month)
+                    cursor.execute('''
+                            SELECT * FROM "Movie Data" WHERE "Date Watched" LIKE '%{}%'
+                    '''.format(year))
+                    if cursor.rowcount == 0:
+                        print("There are no movies watched in that year")
+                    else:
+                        for i in cursor:
+                            print(i)
         elif select == "date":
             #search by exact date
             break
