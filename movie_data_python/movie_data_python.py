@@ -164,7 +164,7 @@ def search():
             print(i)
     elif term == "release year":
         #search for a specific release year or decade
-        year = get_release_year("the movie")
+        year = get_release_year("this is just for search")
         cursor.execute('''
                     SELECT * FROM "Movie Data" WHERE "Release Year"='{}'
         '''.format(year))
@@ -172,7 +172,12 @@ def search():
             print(i)
     elif term == "country":
         #search for a specific country
-        return 0
+        country = get_country()
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Country='{}'
+        '''.format(country))
+        for i in cursor:
+            print(i)
     elif term == "rating":
         #search for a specific rating
         return 0
@@ -201,8 +206,10 @@ def search():
 def get_release_year(title):
     while True:
         try:
-            if title != ""
-            year = int(input("Enter the year {} was released: ".format(title)))
+            if title != "this is just for search":
+                year = int(input("Enter the year {} was released: ".format(title)))
+            else:
+                year = int(input("Enter the year of relase: "))
         except ValueError:
             print("that is not a year")
             continue
@@ -309,6 +316,19 @@ def get_director():
             search()
         else:
             return director
+
+def get_country():
+    while True:
+        print("What is the country of origin?")
+        country = input()
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE Country='{}'
+        '''.format(country))
+        if cursor.rowcount == 0:
+            print("There are no entries from this country")
+        else:
+            return country
+            
   
 
 
