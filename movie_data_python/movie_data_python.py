@@ -284,7 +284,8 @@ def get_title():
             print("There are no entries with this title")
             search()
         else:
-            return title
+            break
+    return title
 
 def get_genre():
     while True:
@@ -299,10 +300,11 @@ def get_genre():
                 print("There are no entries with this genre")
                 search()
             else:
-                return genre
+                break
         else:
             print("not a valid genre")
             print("The genres are Action, Comedy, Crime, Documentary, Drama, Fantasy, Horror, Science Fiction, and Western")
+        return genre
 
 def get_director():
     while True:
@@ -315,7 +317,8 @@ def get_director():
             print("There are no entries with this Director")
             search()
         else:
-            return director
+            break
+    return director
 
 def get_country():
     while True:
@@ -327,7 +330,8 @@ def get_country():
         if cursor.rowcount == 0:
             print("There are no entries from this country")
         else:
-            return country
+            break
+    return country
             
   
 
