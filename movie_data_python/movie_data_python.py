@@ -340,7 +340,7 @@ def get_country():
 
 def search_date():
     while True:
-        print("Search by year, month, date, or go back?")
+        print("Search by year, month, or go back?")
         select = input()
         if select == "year":
             #search by year
@@ -393,9 +393,6 @@ def search_date():
                     else:
                         for i in cursor:
                             print(i)
-        elif select == "date":
-            #search by exact date
-            break
         elif select == "back":
             search()
         else:
