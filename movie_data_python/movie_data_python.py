@@ -1,4 +1,5 @@
 
+from argparse import Action
 from asyncio.windows_events import NULL
 
 
@@ -25,6 +26,10 @@ def action_select():
     #searches through entries
     elif action == ("search"):
         search()
+
+    #sorts entries
+    elif action == ("sort"):
+        sort()
 
     #closes the connection
     elif action == ("close"):
@@ -184,6 +189,117 @@ def search():
         action_select()
 
     action_select()
+
+
+#Sorts entries based on selected criteria
+
+def sort():
+    print("Sort by title, director, country, rating, release year, date logged, date watched, or go back")
+    term = input()
+    if term == "title":
+        #sort entries by title alphabetically 
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY Title ASC
+        ''')
+        for i in cursor:
+            print(i)
+    elif term == "director":
+        #sort entries by director alphabetically
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY Director ASC
+        ''')
+        for i in cursor:
+            print(i)
+    elif term == "country":
+        #sorts entries by country alphabetically
+        cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY Country ASC
+        ''')
+        for i in cursor:
+            print(i)
+    elif term == "rating":
+        print("highest or lowest rated first?")
+        choice = input()
+        if choice == "highest":
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY Rating DESC
+            ''')
+            for i in cursor:
+                print(i)
+        elif choice == "lowest":
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY Rating ASC
+            ''')
+            for i in cursor:
+                print(i)
+        else:
+            print("Not a valid option")
+            sort()
+        #sort by rating either ascending or descending
+    elif term == "release year":
+        #sort by release year either ascending or descending
+        print("newest or earliest first?")
+        choice = input()
+        if choice == "newest":
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY "Release Year" DESC
+            ''')
+            for i in cursor:
+                print(i)
+        elif choice == "earliest":
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY "Release Year" ASC
+            ''')
+            for i in cursor:
+                print(i)
+        else:
+            print("Not a valid option")
+            sort()
+    elif term == "date logged":
+        #sort by id either ascending or descending
+        print("newest or earliest first?")
+        choice = input()
+        if choice == "newest":
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY id DESC
+            ''')
+            for i in cursor:
+                print(i)
+        elif choice == "earliest":
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY id ASC
+            ''')
+            for i in cursor:
+                print(i)
+        else:
+            print("Not a valid option")
+            sort()
+    elif term == "date watched":
+        #sort by date watched either ascending or descending
+        print("newest or earliest first?")
+        choice = input()
+        if choice == "newest":
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY "Date Watched" DESC
+            ''')
+            for i in cursor:
+                print(i)
+        elif choice == "earliest":
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" ORDER BY "Date Watched" ASC
+            ''')
+            for i in cursor:
+                print(i)
+        else:
+            print("Not a valid option")
+            sort()
+    elif term == "back" or term == "go back":
+        action_select()
+    else:
+        print ("Not a valid option")
+        action_select()
+    action_select()
+
        
     
     
