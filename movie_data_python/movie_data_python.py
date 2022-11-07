@@ -43,8 +43,7 @@ def action_select():
 
 #prints all the entries
 def view():
-    cursor.execute('SELECT * FROM "Movie Data"')
-
+    cursor.execute('SELECT * FROM "Movie Data" ORDER BY id DESC')
     for i in cursor:
         print(i)
     action_select()
@@ -118,7 +117,7 @@ def delete_movie():
 #Searches through entries based on selected criteria
 
 def search():
-    print("search by id, title, genre, director, release year, country, rating, favorites, date watched, or go back?")
+    print("search by id, title, genre, director, release year, country, rating, date watched, or go back?")
     term = input()
     if term == "id":
         #search for a specific id
@@ -148,8 +147,8 @@ def search():
         #search for a specific director
         director = get_director()
         cursor.execute('''
-                    SELECT * FROM "Movie Data" WHERE Director='{}'
-        '''.format(director))
+        SELECT * FROM "Movie Data" WHERE (Director='{}' OR (Director LIKE '%{}%' AND Director LIKE '%&%'))
+        '''.format(director, director))
         for i in cursor:
             print(i)
     elif term == "release year":
@@ -194,7 +193,7 @@ def search():
 #Sorts entries based on selected criteria
 
 def sort():
-    print("Sort by title, director, country, rating, release year, date logged, date watched, or go back")
+    print("Sort by title, director, country, rating, release year, favorites, date logged, date watched, or go back")
     term = input()
     if term == "title":
         #sort entries by title alphabetically 
@@ -249,6 +248,24 @@ def sort():
         elif choice == "earliest":
             cursor.execute('''
                     SELECT * FROM "Movie Data" ORDER BY "Release Year" ASC
+            ''')
+            for i in cursor:
+                print(i)
+        else:
+            print("Not a valid option")
+            sort()
+    elif term == "favorites":
+        print("Press f for favorites and n for not favorites")
+        choice = input()
+        if choice == "f":
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE "Favorite?"='TRUE'
+            ''')
+            for i in cursor:
+                print(i)
+        elif choice == "n":
+            cursor.execute('''
+                    SELECT * FROM "Movie Data" WHERE "Favorite?"='FALSE'
             ''')
             for i in cursor:
                 print(i)
@@ -431,8 +448,8 @@ def get_director():
         print("Who is the director of the movie?")
         director = input()
         cursor.execute('''
-                    SELECT * FROM "Movie Data" WHERE Director='{}'
-        '''.format(director))
+                    SELECT * FROM "Movie Data" WHERE (Director='{}' OR (Director LIKE '%{}%' AND Director LIKE '%&%'))
+            '''.format(director, director))
         if cursor.rowcount == 0:
             print("There are no entries with this Director")
             search()
