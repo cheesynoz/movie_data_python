@@ -534,19 +534,6 @@ def search_date():
     
 
             
-  
-
-
-            
-
-
-
-
-
-
-
-
-
 
 
 
@@ -554,15 +541,17 @@ def search_date():
 #importing module  
 import pypyodbc  
 from datetime import datetime
+
+
 #creating connection Object which will contain SQL Server Connection  
 #fill in your own Server and Database name
 #make sure to set server to not timeout in Microsoft SQL Server Management Studio
+
 print("Loading...")
+
 connection = pypyodbc.connect('Driver={SQL Server Native Client 11.0};Server=LAPTOP-J9R8FKKO;Database=testforproject;Trusted_Connection=yes')  
 cursor = connection.cursor()
   
 print("Connection Successfully Established")  
-
-
 
 action_select()
