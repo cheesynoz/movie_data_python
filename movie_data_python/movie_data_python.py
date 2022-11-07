@@ -361,6 +361,7 @@ def get_rating(title):
             print("not a number")
             continue
         else:
+            round(rating, 1)
             if rating < 0.0 or rating > 10.0:
                 print("this is not a valid rating")
                 continue
