@@ -4,6 +4,20 @@ import requests,json,csv,os
 
 #document all the parameters as variables
 api_key = '434b05ce426ea940d14735803b0e13f6'
+
+
+class Movie:
+    title = ''
+    genres = []
+    director = ''
+    release_year = -1
+    country = ''
+    rating = -1
+    favorite = False
+    date_watched = ''
+    language = ''
+
+
 '''Movie_ID = '464052'
 #write a function to compose the query using the parameters provided
 def get_data(API_key, Movie_ID):
@@ -36,18 +50,15 @@ def write_file(filename, text):
     print (result)
     csvFile.close()'''
 
+
+
     
-def get_movies():
+def get_movies(title, year):
 
     # Set the API endpoint URL
     endpoint = "https://api.moviedata.com/search"
 
     query = 'https://api.themoviedb.org/3/search/movie?api_key={}&query={}&year={}'.format(api_key, "The Matrix", 1999)
-
-    # Set the query parameters
-    params = {
-      "q": "The Matrix"
-    }
 
     # Make the request
     response = requests.get(query)
@@ -55,28 +66,26 @@ def get_movies():
 
     # Print the response
     d = response.json()
-    print(d.get('results')[0].get('title'))
+    title = d.get('results')[0].get('title')
+    movie_id = d.get('results')[0].get('id')
+    release_date = d.get('results')[0].get('release_date')
+    title = d.get('results')[0].get('language')
+    genres = []
+    genre_index = 0
+    for genre_id in d.get('results')[0].get('genre_ids'):
+        print(genre_id)
+        
+        genre_query = 'https://api.themoviedb.org/3/genre/movie/list?api_key={}&with_genres={}'.format(api_key, genre_id)
+        genre_response = requests.get(genre_query)
+        g = genre_response.json()
+        genre = ((g.get('genres')[genre_index]).get('name'))
+        genres.append(genre)
+        genre_index = genre_index + 1
 
-    #for key, value in d.items():
-       # print(key + ": " + str(value))
-
-
-    #info = raw_info['title']
-
+    genre_index = 0
     
-    
-
-    # Returns a list of movies matching the search query, including the movie's ID
-
-    [
-      {
-        "id": 12345,
-        "title": "The Matrix",
-        "year": 1999,
-        "genre": "Sci-fi"
-      },
       
-    ]
+    
 
 
 
