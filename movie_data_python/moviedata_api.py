@@ -1,6 +1,9 @@
 #434b05ce426ea940d14735803b0e13f6
 # https://api.themoviedb.org/3/movie/550?api_key=434b05ce426ea940d14735803b0e13f6
 import requests,json,csv,os
+from itertools import islice
+import pprint
+
 
 #document all the parameters as variables
 api_key = '434b05ce426ea940d14735803b0e13f6'
@@ -8,14 +11,19 @@ api_key = '434b05ce426ea940d14735803b0e13f6'
 
 class Movie:
     title = ''
+    movie_id = 0
     genres = []
     director = ''
-    release_year = -1
+    release_date = ''
     country = ''
     rating = -1
     favorite = False
     date_watched = ''
     language = ''
+    overview = ''
+
+    def __repr__(self):
+        return "Movie(title={self.title!r}, ID={self.movie_id!r}, genres={self.genres!r}, director={self.director!r}, release date={self.release_date!r}, country={self.country!r}, rating={self.rating!r}, favorite={self.favorite!r}, date watched={self.date_watched!r}, language={self.language!r})".format(self=self)
 
 
 '''Movie_ID = '464052'
@@ -34,73 +42,66 @@ def get_data(API_key, Movie_ID):
 
 
 
-def write_file(filename, text):
-    dataset = json.loads(text)
-    csvFile = open(filename,'a')
-    csvwriter = csv.writer(csvFile)
-    #unpack the result to access the "collection name" element
-    try:
-        collection_name = dataset['belongs_to_collection']['name']
-    except:
-        #for movies that don't belong to a collection, assign null
-        collection_name = None
-    result = [dataset['original_title'],collection_name]
-    # write data
-    csvwriter.writerow(result)
-    print (result)
-    csvFile.close()'''
+'''
 
 
 
     
-def get_movies(title, year):
+def get_movies(title, year, date_watched, rating):
 
-    # Set the API endpoint URL
-    endpoint = "https://api.moviedata.com/search"
+    movie = Movie()
+    Movie.title = title
+    Movie.date_watched = date_watched
+    Movie.rating = rating
 
-    query = 'https://api.themoviedb.org/3/search/movie?api_key={}&query={}&year={}'.format(api_key, "The Matrix", 1999)
+    #establish query to search for movie with moviedata api
+    query = 'https://api.themoviedb.org/3/search/movie?api_key={}&query={}&year={}'.format(api_key, title, year)
 
     # Make the request
     response = requests.get(query)
 
-
-    # Print the response
+    
     d = response.json()
-    title = d.get('results')[0].get('title')
-    movie_id = d.get('results')[0].get('id')
-    release_date = d.get('results')[0].get('release_date')
-    title = d.get('results')[0].get('language')
+    movie.movie_id = d.get('results')[0].get('id')
+    movie.release_date = d.get('results')[0].get('release_date')
+    movie.language = d.get('results')[0].get('original_language')
+    movie.overview = d.get('results')[0].get('overview')
     genres = []
     genre_index = 0
     for genre_id in d.get('results')[0].get('genre_ids'):
         print(genre_id)
-        
         genre_query = 'https://api.themoviedb.org/3/genre/movie/list?api_key={}&with_genres={}'.format(api_key, genre_id)
         genre_response = requests.get(genre_query)
         g = genre_response.json()
-        genre = ((g.get('genres')[genre_index]).get('name'))
+
+        genre = (g.get('genres')[0].get('name'))
+        
+        
         genres.append(genre)
         genre_index = genre_index + 1
 
+    movie.genres = genres
     genre_index = 0
-    
-      
-    
+
+    pprint.pprint(movie)
+    print('\n')
+
+
+def read_csv(file):
+    with open(file) as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader)
+        first_ten_rows = islice(reader, 200, 268)
+        for row in first_ten_rows:
+            title = row[1]
+            year = int(row[2])
+            rating = int(float(row[4])*2)
+            date_watched = row[7]
+            get_movies(title, year, rating, date_watched)
 
 
 
-#movie_list = ['464052','508442']
-#write header to the file
-#csvFile = open('movie_collection_data.csv','a')
-#csvwriter = csv.writer(csvFile)
-#csvwriter.writerow(['Movie_name','Collection_name'])
-#csvFile.close()
-#for movie in movie_list:
-#    text = get_data(API_key, movie)
-#    #make sure your process breaks when the pull was not successful 
-#    #it's easier to debug this way
-#    if text == "error":
-#        break
-#    write_file('movie_collection_data.csv', text)
 
-get_movies()
+path = r'C:\Users\simon\Downloads\movie_csv\diary.csv'
+read_csv(path)
+#get_movies('The Matrix', 1999)
