@@ -1,6 +1,7 @@
 
 from argparse import Action
 from asyncio.windows_events import NULL
+import requests,json,csv,os
 
 
 def action_select():
@@ -547,6 +548,8 @@ from datetime import datetime
 #creating connection Object which will contain SQL Server Connection  
 #fill in your own Server and Database name
 #make sure to set server to not timeout in Microsoft SQL Server Management Studio
+#434b05ce426ea940d14735803b0e13f6
+#https://api.themoviedb.org/3/movie/550?api_key=434b05ce426ea940d14735803b0e13f6
 
 print("Loading...")
 

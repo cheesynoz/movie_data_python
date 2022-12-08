@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\movie_data_python"
   ],
-  "SelectedNode": "\\C:\\Users\\simon\\Source\\Repos\\movie_data_python",
+  "SelectedNode": "\\movie_data_python\\moviedata_api.py",
   "PreviewInSolutionExplorer": false
 }
