@@ -1,14 +1,16 @@
-#434b05ce426ea940d14735803b0e13f6
+
 # https://api.themoviedb.org/3/movie/550?api_key=434b05ce426ea940d14735803b0e13f6
 import requests,json,csv,os
 from itertools import islice
 import pprint
 
 
-#document all the parameters as variables
+#fill in your specific api key
 api_key = '434b05ce426ea940d14735803b0e13f6'
 
 
+
+#Movie class will contain all information about a movie that will be stored 
 class Movie:
     title = ''
     movie_id = 0
@@ -26,27 +28,9 @@ class Movie:
         return "Movie(title={self.title!r}, ID={self.movie_id!r}, genres={self.genres!r}, director={self.director!r}, release date={self.release_date!r}, country={self.country!r}, rating={self.rating!r}, favorite={self.favorite!r}, date watched={self.date_watched!r}, language={self.language!r})".format(self=self)
 
 
-'''Movie_ID = '464052'
-#write a function to compose the query using the parameters provided
-def get_data(API_key, Movie_ID):
-    query = 'https://api.themoviedb.org/3/movie/'+Movie_ID+'?
-             api_key='+API_key+'&language=en-US'
-    response =  requests.get(query)
-    if response.status_code==200: 
-    #status code ==200 indicates the API query was successful
-        array = response.json()
-        text = json.dumps(array)
-        return (text)
-    else:
-        return ("error")
 
 
-
-'''
-
-
-
-    
+#uses title and year to search for information using moviedata api and create a movie object that that will be added to database
 def get_movies(title, year, date_watched, rating):
 
     movie = Movie()
@@ -69,12 +53,18 @@ def get_movies(title, year, date_watched, rating):
     genres = []
     genre_index = 0
     for genre_id in d.get('results')[0].get('genre_ids'):
-        print(genre_id)
-        genre_query = 'https://api.themoviedb.org/3/genre/movie/list?api_key={}&with_genres={}'.format(api_key, genre_id)
+        genre_query = 'https://api.themoviedb.org/3/genre/movie/list?api_key={}'.format(api_key)
         genre_response = requests.get(genre_query)
         g = genre_response.json()
+        
 
-        genre = (g.get('genres')[0].get('name'))
+        genre_list = (g.get('genres'))
+        for d in genre_list:
+            if d.get('id') == genre_id:
+                genre = d.get('name')
+                break
+       
+        
         
         
         genres.append(genre)
@@ -83,10 +73,11 @@ def get_movies(title, year, date_watched, rating):
     movie.genres = genres
     genre_index = 0
 
-    pprint.pprint(movie)
+    print(movie.__repr__())
     print('\n')
 
 
+#iterates through csv to find title, year, rating, and date watched
 def read_csv(file):
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
@@ -104,4 +95,3 @@ def read_csv(file):
 
 path = r'C:\Users\simon\Downloads\movie_csv\diary.csv'
 read_csv(path)
-#get_movies('The Matrix', 1999)
