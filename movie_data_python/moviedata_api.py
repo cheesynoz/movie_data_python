@@ -5,6 +5,7 @@ from itertools import islice
 import pprint
 
 
+
 #fill in your specific api key
 api_key = '434b05ce426ea940d14735803b0e13f6'
 
@@ -31,12 +32,12 @@ class Movie:
 
 
 #uses title and year to search for information using moviedata api and create a movie object that that will be added to database
-def get_movies(title, year, date_watched, rating):
+def get_movies(title, year, rating, date_watched):
 
     movie = Movie()
-    Movie.title = title
-    Movie.date_watched = date_watched
-    Movie.rating = rating
+    movie.title = title
+    movie.date_watched = date_watched
+    movie.rating = rating
 
     #establish query to search for movie with moviedata api
     query = 'https://api.themoviedb.org/3/search/movie?api_key={}&query={}&year={}'.format(api_key, title, year)
@@ -46,52 +47,68 @@ def get_movies(title, year, date_watched, rating):
 
     
     d = response.json()
-    movie.movie_id = d.get('results')[0].get('id')
-    movie.release_date = d.get('results')[0].get('release_date')
-    movie.language = d.get('results')[0].get('original_language')
-    movie.overview = d.get('results')[0].get('overview')
-    genres = []
-    genre_index = 0
-    for genre_id in d.get('results')[0].get('genre_ids'):
-        genre_query = 'https://api.themoviedb.org/3/genre/movie/list?api_key={}'.format(api_key)
-        genre_response = requests.get(genre_query)
-        g = genre_response.json()
+    try:
+        movie.movie_id = d.get('results')[0].get('id')
+        movie.release_date = str(d.get('results')[0].get('release_date'))
+        movie.language = d.get('results')[0].get('original_language')
+        movie.overview = d.get('results')[0].get('overview')
+        genres = []
+        genre_index = 0
+        for genre_id in d.get('results')[0].get('genre_ids'):
+            genre_query = 'https://api.themoviedb.org/3/genre/movie/list?api_key={}'.format(api_key)
+            genre_response = requests.get(genre_query)
+            g = genre_response.json()
         
 
-        genre_list = (g.get('genres'))
-        for d in genre_list:
-            if d.get('id') == genre_id:
-                genre = d.get('name')
-                break
+            genre_list = (g.get('genres'))
+            for d in genre_list:
+                if d.get('id') == genre_id:
+                    genre = d.get('name')
+                    break
        
         
         
         
-        genres.append(genre)
-        genre_index = genre_index + 1
+            genres.append(genre)
+            genre_index = genre_index + 1
 
-    movie.genres = genres
-    genre_index = 0
+        movie.genres = genres
+        genre_index = 0
 
-    print(movie.__repr__())
-    print('\n')
+        return movie
+    except IndexError:
+        print(('Could not find an entry for {}').format(title))
+
+    
+
+
 
 
 #iterates through csv to find title, year, rating, and date watched
 def read_csv(file):
+    movies = []
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
-        first_ten_rows = islice(reader, 200, 268)
-        for row in first_ten_rows:
+        #first_ten_rows = islice(reader, 0, 10)
+        #for row in first_ten_rows:
+        for row in reader:
             title = row[1]
             year = int(row[2])
-            rating = int(float(row[4])*2)
+            if isinstance(row[4], int):    
+                rating = int(float(row[4])*2)
+            else:
+                rating = -1
             date_watched = row[7]
-            get_movies(title, year, rating, date_watched)
+            m = get_movies(title, year, rating, date_watched)
+            movies.append(m)
+    
+        
+    return movies
 
 
 
 
-path = r'C:\Users\simon\Downloads\movie_csv\diary.csv'
-read_csv(path)
+
+
+
