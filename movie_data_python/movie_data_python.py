@@ -556,7 +556,11 @@ def search_date():
 
 def insert_csv(movies):
     for movie in movies:
-        title = movie.title
+        if movie.apostrophe:
+            title = (movie.title).replace("'", "''")
+            
+        else:
+            title = movie.title
         genres = ', '.join(movie.genres)
         director = movie.director
         release_year = movie.release_date

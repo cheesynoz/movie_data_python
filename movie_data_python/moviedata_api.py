@@ -3,6 +3,7 @@
 import requests,json,csv,os
 from itertools import islice
 import pprint
+import urllib.parse
 
 
 
@@ -21,6 +22,7 @@ class Movie:
     country = ''
     rating = -1
     favorite = False
+    apostrophe = False
     date_watched = ''
     language = ''
     overview = ''
@@ -32,12 +34,13 @@ class Movie:
 
 
 #uses title and year to search for information using moviedata api and create a movie object that that will be added to database
-def get_movies(title, year, rating, date_watched):
+def get_movies(title, year, rating, date_watched, apostrophe):
 
     movie = Movie()
     movie.title = title
     movie.date_watched = date_watched
     movie.rating = rating
+    movie.apostrophe = apostrophe
 
     #establish query to search for movie with moviedata api
     query = 'https://api.themoviedb.org/3/search/movie?api_key={}&query={}&year={}'.format(api_key, title, year)
@@ -90,17 +93,21 @@ def read_csv(file):
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
-        #first_ten_rows = islice(reader, 0, 10)
+        #first_ten_rows = islice(reader, 25, 40)
         #for row in first_ten_rows:
         for row in reader:
+            apostrophe = False
             title = row[1]
+            if "'" in title or "&" in title:
+                print(title)
+                apostrophe = True
             year = int(row[2])
             if isinstance(row[4], int):    
                 rating = int(float(row[4])*2)
             else:
                 rating = -1
             date_watched = row[7]
-            m = get_movies(title, year, rating, date_watched)
+            m = get_movies(title, year, rating, date_watched, apostrophe)
             movies.append(m)
     
         
