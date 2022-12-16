@@ -1,11 +1,12 @@
 
 from argparse import Action
 from asyncio.windows_events import NULL
+import requests,json,csv,os
 
 
 def action_select():
     #print available actions
-    print("OPTIONS: view, insert, delete, search, sort, or close")
+    print("OPTIONS: view, insert, delete, search, sort, import, or close")
 
     #user selects an action
     action = input("Select option: ")
@@ -30,6 +31,10 @@ def action_select():
     #sorts entries
     elif action == ("sort"):
         sort()
+
+    #import data
+    elif action == ("import"):
+        import_data(path)
 
     #closes the connection
     elif action == ("close"):
@@ -318,7 +323,22 @@ def sort():
     action_select()
 
        
-    
+def import_data(path):
+    print('Enter 1 to use {} or 2 to enter new file path'.format(path))
+    choice = input()
+    if choice == "1":
+        movies = moviedata_api.read_csv(path)
+        insert_csv(movies)
+    elif choice == "2":
+        print("Enter the file path:")
+        print("\n")
+        path = input()
+        movies = moviedata_api.read_csv(path)
+        insert_csv(movies)
+    else:
+        print("not a valid choice")
+        import_data(path)
+
     
 
 
@@ -361,6 +381,7 @@ def get_rating(title):
             print("not a number")
             continue
         else:
+            round(rating, 1)
             if rating < 0.0 or rating > 10.0:
                 print("this is not a valid rating")
                 continue
@@ -531,6 +552,36 @@ def search_date():
         else:
             print("this is not a valid option")
     action_select()
+
+
+def insert_csv(movies):
+    for movie in movies:
+        if movie.apostrophe:
+            title = (movie.title).replace("'", "''")
+            
+        else:
+            title = movie.title
+        genres = ', '.join(movie.genres)
+        director = movie.director
+        release_year = movie.release_date
+        country = movie.country
+        rating = movie.rating
+        is_favorite = movie.favorite
+        date = movie.date_watched
+        if date != '':
+            cursor.execute('''
+                        INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Favorite?", "Date Watched")
+                        VALUES
+                        ('{}', '{}', '{}', {}, '{}', {}, '{}', '{}')
+                        '''.format(title, genres, director, release_year, country, rating, is_favorite, date))
+        else: 
+            cursor.execute('''
+                        INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Favorite?", "Date Watched")
+                        VALUES
+                        ('{}', '{}', '{}', {}, '{}', {}, '{}', NULL)
+                        '''.format(title, genres, director, release_year, country, rating, is_favorite))
+        connection.commit()
+
     
 
             
@@ -541,11 +592,16 @@ def search_date():
 #importing module  
 import pypyodbc  
 from datetime import datetime
+import moviedata_api
+path = r'C:\Users\simon\Downloads\movie_csv\diary.csv'
+
 
 
 #creating connection Object which will contain SQL Server Connection  
 #fill in your own Server and Database name
 #make sure to set server to not timeout in Microsoft SQL Server Management Studio
+#434b05ce426ea940d14735803b0e13f6
+#https://api.themoviedb.org/3/movie/550?api_key=434b05ce426ea940d14735803b0e13f6
 
 print("Loading...")
 
