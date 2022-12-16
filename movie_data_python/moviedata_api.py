@@ -52,6 +52,7 @@ def get_movies(title, year, rating, date_watched, apostrophe):
     d = response.json()
     try:
         movie.movie_id = d.get('results')[0].get('id')
+        movie.director = get_director(movie)
         movie.release_date = str(d.get('results')[0].get('release_date'))
         movie.language = d.get('results')[0].get('original_language')
         movie.overview = d.get('results')[0].get('overview')
@@ -82,6 +83,35 @@ def get_movies(title, year, rating, date_watched, apostrophe):
     except IndexError:
         print(('Could not find an entry for {}').format(title))
 
+def get_director(movie):
+    movie_id = movie.movie_id
+    
+    query = f"https://api.themoviedb.org/3/movie/{movie_id}/credits?api_key={api_key}&language=en-US".format(movie_id, api_key)
+
+    response = requests.get(query)
+
+    if response.status_code == 200:
+        data = response.json()
+        directors = []
+        director = ''
+        title = movie.title
+        for crew_member in data['crew']:
+            if crew_member['job'] == 'Director':
+                directors.append(crew_member['name'])
+        if len(directors) > 1:
+            for d in directors:
+                director = director + d + ' & '
+            director = director[:-3]
+            print('the directors of {} are {}'.format(title, director))
+        elif len(directors) == 1:
+            director = directors[0]
+            print('The director of {} is {}'.format(title, director))
+            return director
+        return director
+        
+    else:
+        print(f"An error occurred: {response.status_code}")
+
     
 
 
@@ -93,13 +123,12 @@ def read_csv(file):
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
-        #first_ten_rows = islice(reader, 25, 40)
+        #first_ten_rows = islice(reader, 260, 268)
         #for row in first_ten_rows:
         for row in reader:
             apostrophe = False
             title = row[1]
             if "'" in title or "&" in title:
-                print(title)
                 apostrophe = True
             year = int(row[2])
             if isinstance(row[4], int):    
@@ -107,15 +136,9 @@ def read_csv(file):
             else:
                 rating = -1
             date_watched = row[7]
+            
             m = get_movies(title, year, rating, date_watched, apostrophe)
             movies.append(m)
     
         
     return movies
-
-
-
-
-
-
-

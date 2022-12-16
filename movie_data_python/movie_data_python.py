@@ -558,11 +558,15 @@ def insert_csv(movies):
     for movie in movies:
         if movie.apostrophe:
             title = (movie.title).replace("'", "''")
+
             
         else:
             title = movie.title
         genres = ', '.join(movie.genres)
-        director = movie.director
+        if "'" in movie.director:
+            director = (movie.director).replace("'", "''")
+        else:
+            director = movie.director
         release_year = movie.release_date
         country = movie.country
         rating = movie.rating
