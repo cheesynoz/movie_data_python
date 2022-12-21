@@ -556,10 +556,8 @@ def search_date():
 
 def insert_csv(movies):
     for movie in movies:
-        if movie.apostrophe:
+        if "'" in movie.title:
             title = (movie.title).replace("'", "''")
-
-            
         else:
             title = movie.title
         genres = ', '.join(movie.genres)
@@ -570,20 +568,19 @@ def insert_csv(movies):
         release_year = movie.release_date
         country = movie.country
         rating = movie.rating
-        is_favorite = movie.favorite
         date = movie.date_watched
         if date != '':
             cursor.execute('''
-                        INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Favorite?", "Date Watched")
+                        INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Date Watched")
                         VALUES
                         ('{}', '{}', '{}', {}, '{}', {}, '{}', '{}')
-                        '''.format(title, genres, director, release_year, country, rating, is_favorite, date))
+                        '''.format(title, genres, director, release_year, country, rating, date))
         else: 
             cursor.execute('''
-                        INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Favorite?", "Date Watched")
+                        INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating)
                         VALUES
                         ('{}', '{}', '{}', {}, '{}', {}, '{}', NULL)
-                        '''.format(title, genres, director, release_year, country, rating, is_favorite))
+                        '''.format(title, genres, director, release_year, country, rating))
         connection.commit()
 
     
