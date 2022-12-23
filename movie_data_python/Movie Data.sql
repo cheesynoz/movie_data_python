@@ -1,7 +1,7 @@
 USE [testforproject]
 GO
 
-/****** Object:  Table [dbo].[Movie Data]    Script Date: 9/29/2022 2:42:08 PM ******/
+/****** Object:  Table [dbo].[Movie Data]    Script Date: 12/23/2022 3:49:01 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -11,13 +11,13 @@ GO
 CREATE TABLE [dbo].[Movie Data](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[Title] [varchar](max) NOT NULL,
-	[Genre] [varchar](50) NOT NULL,
+	[Genre] [varchar](max) NULL,
 	[Director] [varchar](max) NULL,
-	[Release Year] [int] NOT NULL,
-	[Country] [varchar](50) NULL,
+	[Release Year] [varchar](50) NOT NULL,
+	[Country] [varchar](max) NULL,
 	[Rating] [int] NULL,
-	[Favorite?] [bit] NOT NULL,
 	[Date Watched] [varchar](50) NULL,
+	[TMDB_id] [int] NOT NULL,
  CONSTRAINT [PK_Movie Data] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -25,5 +25,4 @@ CREATE TABLE [dbo].[Movie Data](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[Movie Data] ADD  CONSTRAINT [DF__Movie Dat__Favor__35BCFE0A]  DEFAULT ((0)) FOR [Favorite?]
-GO
+
