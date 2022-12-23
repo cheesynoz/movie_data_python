@@ -565,22 +565,23 @@ def insert_csv(movies):
             director = (movie.director).replace("'", "''")
         else:
             director = movie.director
+        movie_id = movie.movie_id
         release_year = movie.release_date
         country = movie.country
         rating = movie.rating
         date = movie.date_watched
         if date != '':
             cursor.execute('''
-                        INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Date Watched")
+                        INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Date Watched", TMDB_id)
                         VALUES
                         ('{}', '{}', '{}', {}, '{}', {}, '{}', '{}')
-                        '''.format(title, genres, director, release_year, country, rating, date))
+                        '''.format(title, genres, director, release_year, country, rating, date, movie_id))
         else: 
             cursor.execute('''
-                        INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating)
+                        INSERT INTO "Movie Data" (Title, Genre, Director, "Release Year", Country, Rating, "Date Watched", TMDB_id)
                         VALUES
-                        ('{}', '{}', '{}', {}, '{}', {}, '{}', NULL)
-                        '''.format(title, genres, director, release_year, country, rating))
+                        ('{}', '{}', '{}', {}, '{}', '{}', NULL, '{}')
+                        '''.format(title, genres, director, release_year, country, rating, movie_id))
         connection.commit()
 
     
@@ -595,6 +596,7 @@ import pypyodbc
 from datetime import datetime
 import moviedata_api
 path = r'C:\Users\simon\Downloads\movie_csv\diary.csv'
+ratings = r'C:\Users\simon\Downloads\movie_csv\ratings.csv'
 
 
 

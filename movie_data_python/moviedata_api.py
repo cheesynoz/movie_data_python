@@ -137,10 +137,8 @@ def get_country(movie):
                 for c in countries:
                     country = country + c + ' & '
                 country = country[:-3]
-                print('The production countries of {} are {}'.format(title, country))
             elif len(countries) == 1:
                 country = countries[0]
-                print('The production country of {} is {}'.format(title, country))
                 return country
             return country
         
@@ -161,12 +159,14 @@ def read_csv(file):
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
-        #first_ten_rows = islice(reader, 260, 268)
+        #first_ten_rows = islice(reader, 200, None)
         #for row in first_ten_rows:
         for row in reader:
             title = row[1]
+            print(title)
             year = int(row[2])
-            if isinstance(row[4], int):    
+            
+            if row[4] != '':  
                 rating = int(float(row[4])*2)
             else:
                 rating = -1
